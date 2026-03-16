@@ -1,5 +1,6 @@
 package dev.nandi0813.practice.Manager.Inventory.SpawnInventory;
 
+import dev.nandi0813.practice.Manager.File.ConfigManager;
 import dev.nandi0813.practice.Manager.File.LanguageManager;
 import dev.nandi0813.practice.Manager.Gui.GUIType;
 import dev.nandi0813.practice.Manager.Gui.GUIs.StatsGui;
@@ -24,10 +25,14 @@ public class SpawnInventoryListener implements Listener {
         ItemStack item = e.getItem();
         Action action = e.getAction();
 
-        if (item != null && profile.getStatus().equals(ProfileStatus.LOBBY) && party == null) {
-            if (!player.hasPermission("zonepractice.admin"))
+        if (profile.getStatus().equals(ProfileStatus.LOBBY) && !ConfigManager.getBoolean("protection.allow-lobby-interact")) {
+            if (!player.hasPermission("zonepractice.admin")) {
                 e.setCancelled(true);
+                return;
+            }
+        }
 
+        if (item != null && profile.getStatus().equals(ProfileStatus.LOBBY) && party == null) {
             if (action.equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                 if (item.equals(SpawnInventory.getUnrankedItem())) {
                     Practice.getGuiManager().searchGUI(GUIType.QUEUE_UNRANKED).open(player);
